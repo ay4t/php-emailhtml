@@ -1,0 +1,26 @@
+{
+    "authors": [
+        {
+            "email": "ayatullohahadr@gmail.com",
+            "homepage": "https://github.com/ay4t",
+            "name": "Ayatulloh Ahad R",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Ay4t\\PHPMailerTemplate\\": "src/"
+        }
+    },
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "name": "ay4t/php-mailer-template",
+    "prefer-stable": true,
+    "require": {
+        "phpmailer/phpmailer": "v6.6.5",
+        "twig/twig": "v3.4.3"
+    },
+    "time": "2022-11-14 07:45:13",
+    "type": "library",
+    "version": "1.0.0"
+}

@@ -19,7 +19,7 @@
  * ----------	---	---------------------------------------------------------
  */
 
-namespace Ay4t\PHPMailerTemplate\Traits;
+namespace Ay4t\Emailhtml\Traits;
 
 trait  GlobalSetterTraits
 {

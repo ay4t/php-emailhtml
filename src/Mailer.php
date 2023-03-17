@@ -19,24 +19,33 @@
  * ----------	---	---------------------------------------------------------
  */
 
-namespace Ay4t\PHPMailerTemplate;
+namespace Ay4t\Emailhtml;
 
-use Ay4t\PHPMailerTemplate\Traits\GlobalSetterTraits;
+use Ay4t\Emailhtml\Traits\GlobalSetterTraits;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-class MailerTemplate
+class Mailer
 {
     use GlobalSetterTraits;
 
     /**
-     * @var \Ay4t\PHPMailerTemplate\Config\App();
+     * @return \Ay4t\Emailhtml\Config\App();
      * @author Ayatulloh Ahad R <ayatulloh@indiega.net>
      */
     protected $config;
-
+    
+    /**
+     * @var string
+     * @author Ayatulloh Ahad R <ayatulloh@indiega.net>
+     */
     private $sendToEmail;
+     
+    /**
+     * @var bool
+     * @author Ayatulloh Ahad R <ayatulloh@indiega.net>
+     */
     private $sendToName     = false;
     
     /**
@@ -50,11 +59,18 @@ class MailerTemplate
      * @author Ayatulloh Ahad R <ayatulloh@indiega.net>
      */
     private $altBody;
+    
+    /**
+     * @var bool
+     */
+    private $debugOutput = true;
 
-    public function __construct()
+
+    public function __construct(string $filename = 'account_welcome')
     {
         $this->template_path    = __DIR__ . '/Templates/default/';
-        $this->config           = new \Ay4t\PHPMailerTemplate\Config\App();
+        $this->config           = new \Ay4t\Emailhtml\Config\App();
+        $this->filename         = $filename;
 
         $this->data['base_url']         = $this->config->baseURL;
         $this->data['company_name']     = 'INDIEGA NETWORK';
@@ -67,7 +83,7 @@ class MailerTemplate
         $loader     = new \Twig\Loader\FilesystemLoader( $this->template_path );
         $twig       = new \Twig\Environment($loader);
 
-        $this->renderHTML   = $twig->render( $this->filename , $this->data);
+        $this->renderHTML   = $twig->render( $this->filename . '.html' , $this->data);
         if( !$shared ) echo $this->renderHTML;
 
         return $this->renderHTML;
@@ -106,7 +122,7 @@ class MailerTemplate
 
         try {
             //Server settings
-            $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+            $mail->SMTPDebug = ($this->debugOutput)? SMTP::DEBUG_SERVER : false;                      //Enable verbose debug output
             $mail->isSMTP();                                            //Send using SMTP
             $mail->Host       = $this->config->Host;                     //Set the SMTP server to send through
             $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
@@ -170,4 +186,14 @@ class MailerTemplate
 		$this->altBody = $altBody;
 		return $this;
 	}
+
+    /**
+     * Set the value of debugOutput
+     * @return self
+     */ 
+    public function setDebugOutput($debugOutput)
+    {
+        $this->debugOutput = $debugOutput;
+        return $this;
+    }
 }

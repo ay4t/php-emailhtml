@@ -19,11 +19,9 @@
 * ----------	---	---------------------------------------------------------
 */
 
-namespace Ay4t\PHPMailerTemplate\Config;
+namespace Ay4t\Emailhtml\Config;
 
-use CodeIgniter\Config\BaseConfig;
-
-class App extends BaseConfig
+class App 
 {
     //Set Base URL for domain. Jika Anda menjalankan pada Framework Codeigniter maka abaikan property ini
     public $baseURL     = '';

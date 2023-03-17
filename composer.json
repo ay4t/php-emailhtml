@@ -9,7 +9,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Ay4t\\PHPMailerTemplate\\": "src/"
+            "Ay4t\\Emailhtml\\": "src/"
         }
     },
     "license": "MIT",

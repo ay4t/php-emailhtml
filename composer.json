@@ -13,9 +13,7 @@
         }
     },
     "license": "MIT",
-    "minimum-stability": "dev",
     "name": "ay4t/php-mailer-template",
-    "prefer-stable": true,
     "require": {
         "phpmailer/phpmailer": "v6.6.5",
         "twig/twig": "v3.4.3"

@@ -66,16 +66,16 @@ class Mailer
     private $debugOutput = true;
 
 
-    public function __construct(string $filename = 'account_welcome')
+    public function __construct($filename = 'account_welcome', $config = null)
     {
-        $this->template_path    = __DIR__ . '/Templates/default/';
-        $this->config           = new \Ay4t\Emailhtml\Config\App();
+        $this->config           = (!$config)? new \Ay4t\Emailhtml\Config\App() : $config;
+        $this->template_path    = $this->config->template_path;
         $this->filename         = $filename;
 
-        $this->data['base_url']         = $this->config->baseURL;
+        /* $this->data['base_url']         = $this->config->baseURL;
         $this->data['company_name']     = 'INDIEGA NETWORK';
         $this->data['company_address']  = 'Jl. Jend Sudirman 123 Kota Bahagia';
-        $this->data['logo_url']         = 'https://indiega.net/templates/landrick/images/indiega-web-logo-path.svg';
+        $this->data['logo_url']         = 'https://indiega.net/templates/landrick/images/indiega-web-logo-path.svg'; */
     }
 
     public function render( $shared = false )
@@ -109,9 +109,8 @@ class Mailer
     /**
      * fungsi untuk proses mengirim email
      *
-     * @param Type $var Description
-     * @return type
-     * @throws conditon
+     * @return bool
+     * @throws Exception
      **/
     public function send()
     {
@@ -151,6 +150,7 @@ class Mailer
 
         } catch (Exception $e) {
             echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+            return false;
         }
     }
     

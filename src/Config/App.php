@@ -40,5 +40,8 @@ class App
 
     public $FromName    = 'Indiega Network';
     public $FromEmail   = 'ayatulloh@indiega.net';
+    
+    public $template_path   = __DIR__ . '/../Templates/default/';
+    
 }
 

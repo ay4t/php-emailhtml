@@ -26,7 +26,7 @@
 
 require_once 'vendor/autoload.php';
 
-$email  = new \Ay4t\Emailhtml\Mailer();
+$email  = new \Ay4t\Emailhtml\Mailer( 'account_welcome' );
 $email->mergeData([
     'fullname'          => 'your_fullname',
     'dashboard_url'     => 'https://localhost/dashboard',
@@ -35,8 +35,9 @@ $email->mergeData([
 ]);
 
 $email->setAltBody('');
-$email->setSubject('Subject Email');
-$email->sendTo('email_to', 'your_fullname');
+$email->setSubject('Coba Testing Kirim Email');
+$email->sendTo('email_pertama@gmail.com', 'ayatulloh ahad r');
+$email->sendTo('email_kedua@gmail.com', 'ayatulloh ahad r');
 // $email->send();
 
 $email->render();

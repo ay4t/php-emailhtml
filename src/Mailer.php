@@ -40,18 +40,6 @@ class Mailer
      * @var string
      * @author Ayatulloh Ahad R <ayatulloh@indiega.net>
      */
-    private $sendToEmail;
-     
-    /**
-     * @var bool
-     * @author Ayatulloh Ahad R <ayatulloh@indiega.net>
-     */
-    private $sendToName     = false;
-    
-    /**
-     * @var string
-     * @author Ayatulloh Ahad R <ayatulloh@indiega.net>
-     */
     private $sendSubject;
 
     /**
@@ -65,12 +53,16 @@ class Mailer
      */
     private $debugOutput = true;
 
+    private $phpMailer;
+
 
     public function __construct($filename = 'account_welcome', $config = null)
     {
         $this->config           = (!$config)? new \Ay4t\Emailhtml\Config\App() : $config;
         $this->template_path    = $this->config->template_path;
         $this->filename         = $filename;
+
+        $this->phpMailer        = new PHPMailer(true);
 
         /* $this->data['base_url']         = $this->config->baseURL;
         $this->data['company_name']     = 'INDIEGA NETWORK';
@@ -101,8 +93,7 @@ class Mailer
      */
     public function sendTo(string $to_email, string $to_name)
     {
-        $this->sendToName   = $to_name;
-        $this->sendToEmail  = $to_email;
+        $this->phpMailer->addAddress($to_email, $to_name);
         return $this;
     }
 
@@ -117,39 +108,38 @@ class Mailer
         $output     = $this->render( true );
 
         //Create an instance; passing `true` enables exceptions
-        $mail = new PHPMailer(true);
+        // $mail = new PHPMailer(true);
 
         try {
             //Server settings
-            $mail->SMTPDebug = ($this->debugOutput)? SMTP::DEBUG_SERVER : false;                      //Enable verbose debug output
-            $mail->isSMTP();                                            //Send using SMTP
-            $mail->Host       = $this->config->Host;                     //Set the SMTP server to send through
-            $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-            $mail->Username   = $this->config->Username;                     //SMTP username
-            $mail->Password   = $this->config->Password;                               //SMTP password
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
-            $mail->Port       = $this->config->Port;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+            $this->phpMailer->SMTPDebug = ($this->debugOutput)? SMTP::DEBUG_SERVER : false;                      //Enable verbose debug output
+            $this->phpMailer->isSMTP();                                            //Send using SMTP
+            $this->phpMailer->Host       = $this->config->Host;                     //Set the SMTP server to send through
+            $this->phpMailer->SMTPAuth   = true;                                   //Enable SMTP authentication
+            $this->phpMailer->Username   = $this->config->Username;                     //SMTP username
+            $this->phpMailer->Password   = $this->config->Password;                               //SMTP password
+            $this->phpMailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+            $this->phpMailer->Port       = $this->config->Port;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
             //Recipients
-            $mail->setFrom($this->config->FromEmail, $this->config->FromName);
-            $mail->addAddress($this->sendToEmail, $this->sendToName);     //Add a recipient
-            $mail->addReplyTo($this->config->FromEmail, $this->config->FromName);
+            $this->phpMailer->setFrom($this->config->FromEmail, $this->config->FromName);
+            $this->phpMailer->addReplyTo($this->config->FromEmail, $this->config->FromName);
 
             //Attachments
-            /* $mail->addAttachment('/var/tmp/file.tar.gz');
-            $mail->addAttachment('/tmp/image.jpg', 'new.jpg'); */
+            /* $this->phpMailer->addAttachment('/var/tmp/file.tar.gz');
+            $this->phpMailer->addAttachment('/tmp/image.jpg', 'new.jpg'); */
 
             //Content
-            $mail->isHTML(true);                                  //Set email format to HTML
-            $mail->Subject = $this->sendSubject;
-            $mail->Body    = $output;
+            $this->phpMailer->isHTML(true);                                  //Set email format to HTML
+            $this->phpMailer->Subject = $this->sendSubject;
+            $this->phpMailer->Body    = $output;
 
-            if(! empty($this->altBody)) $mail->AltBody = $this->altBody;
+            if(! empty($this->altBody)) $this->phpMailer->AltBody = $this->altBody;
 
-            return $mail->send();
+            return $this->phpMailer->send();
 
         } catch (Exception $e) {
-            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+            echo "Message could not be sent. Mailer Error: {$this->phpMailer->ErrorInfo}";
             return false;
         }
     }

@@ -33,13 +33,13 @@ class App
     public $Username   = 'user@example.com';
 
     //SMTP password
-    public $Password   = 'your_SNTP_password';
+    public $Password   = 'your SMTP password';
 
     //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
     public $Port        = 465;
 
     public $FromName    = 'Indiega Network';
-    public $FromEmail   = 'ayatulloh@indiega.net';
+    public $FromEmail   = 'user@example.com';
     
     public $template_path   = __DIR__ . '/../Templates/default/';
     

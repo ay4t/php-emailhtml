@@ -98,6 +98,19 @@ class Mailer
     }
 
     /**
+     * Undocumented function
+     *
+     * @param string $cc_email
+     * @param string $cc_name
+     * @return self
+     */
+    public function addCCto(string $cc_email, string $cc_name)
+    {
+        $this->phpMailer->addCC($cc_email, $cc_name);
+        return $this;
+    }
+
+    /**
      * fungsi untuk proses mengirim email
      *
      * @return bool

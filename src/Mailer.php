@@ -60,6 +60,12 @@ class Mailer
      * @author Ayatulloh Ahad R <ayatulloh@indiega.net>
      */
     private array $attachments = [];
+    
+    /**
+     * @var array
+     * @author Ayatulloh Ahad R <ayatulloh@indiega.net>
+     */
+    private array $string_attachments = [];
 
 
     public function __construct($filename = 'account_welcome', $config = null)
@@ -152,6 +158,24 @@ class Mailer
                     }
                 }
             }
+            
+            //String Attachments
+            if (!empty($this->string_attachments)) {
+                foreach ($this->string_attachments as $attachment) {
+                    if (isset($attachment['string']) && isset($attachment['filename'])) {
+                        $encoding = $attachment['encoding'] ?? PHPMailer::ENCODING_BASE64;
+                        $type = $attachment['type'] ?? '';
+                        $disposition = $attachment['disposition'] ?? 'attachment';
+                        $this->phpMailer->addStringAttachment(
+                            $attachment['string'],
+                            $attachment['filename'],
+                            $encoding,
+                            $type,
+                            $disposition
+                        );
+                    }
+                }
+            }
 
             //Content
             $this->phpMailer->isHTML(true);                                  //Set email format to HTML
@@ -233,6 +257,49 @@ class Mailer
     {
         foreach ($attachments as $attachment) {
             $this->attachments[] = $attachment;
+        }
+        return $this;
+    }
+    
+    /**
+     * Menambahkan string attachment (non-filesystem)
+     * Method ini dapat digunakan untuk melampirkan data ascii atau binary,
+     * seperti record BLOB dari database.
+     *
+     * @param string $string      Data string attachment
+     * @param string $filename    Nama file attachment
+     * @param string $encoding    Encoding file (default: base64)
+     * @param string $type        Tipe file (MIME)
+     * @param string $disposition Disposition yang digunakan (default: attachment)
+     * @return self
+     */
+    public function addStringAttachment(
+        $string,
+        $filename,
+        $encoding = null,
+        $type = '',
+        $disposition = 'attachment'
+    ) {
+        $this->string_attachments[] = [
+            'string' => $string,
+            'filename' => $filename,
+            'encoding' => $encoding,
+            'type' => $type,
+            'disposition' => $disposition,
+        ];
+        return $this;
+    }
+    
+    /**
+     * Menambahkan multiple string attachments
+     * 
+     * @param array $attachments Array dari string attachment, masing-masing dengan key 'string', 'filename', dll.
+     * @return self
+     */
+    public function addMultiStringAttachments(array $attachments)
+    {
+        foreach ($attachments as $attachment) {
+            $this->string_attachments[] = $attachment;
         }
         return $this;
     }

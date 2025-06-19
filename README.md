@@ -22,7 +22,7 @@ Library PHP untuk mengirim email dengan dukungan template HTML menggunakan PHPMa
 - Integrasi dengan PHPMailer untuk pengiriman email yang handal
 - Dukungan template HTML menggunakan Twig
 - Konfigurasi SMTP yang fleksibel
-- Kemampuan untuk mengirim email dengan attachment
+- Kemampuan untuk mengirim email dengan file attachment dan string attachment
 - Dukungan untuk CC dan BCC
 - Metode fluent interface untuk kemudahan penggunaan
 
@@ -134,9 +134,13 @@ $email->send();
 
 ## Mengirim Email dengan Attachment
 
-Library ini mendukung pengiriman email dengan attachment file. Anda dapat menambahkan attachment tunggal atau multiple attachment.
+Library ini mendukung pengiriman email dengan attachment. Terdapat dua jenis attachment yang didukung: file attachment dan string attachment.
 
-### Menambahkan Attachment Tunggal
+### File Attachment
+
+File attachment menggunakan path file di sistem untuk melampirkan file ke email.
+
+#### Menambahkan File Attachment Tunggal
 
 ```php
 $email = new \Ay4t\Emailhtml\Mailer();
@@ -153,7 +157,7 @@ $email->sendTo('client@example.com', 'Client Name');
 $email->send();
 ```
 
-### Menambahkan Multiple Attachment
+#### Menambahkan Multiple File Attachment
 
 ```php
 $email = new \Ay4t\Emailhtml\Mailer();
@@ -182,6 +186,62 @@ $email->sendTo('client@example.com', 'Client Name');
 $email->send();
 ```
 
+### String Attachment
+
+String attachment memungkinkan Anda melampirkan data langsung (string atau binary) ke email tanpa perlu file fisik. Ini sangat berguna untuk melampirkan data dari database atau konten yang dihasilkan secara dinamis.
+
+#### Menambahkan String Attachment Tunggal
+
+```php
+$email = new \Ay4t\Emailhtml\Mailer();
+
+// Contoh data string (misalnya dari database atau hasil generate PDF)
+$pdfContent = generatePdfContent(); // Fungsi contoh yang menghasilkan konten PDF
+
+// Tambahkan string attachment
+$email->addStringAttachment(
+    $pdfContent,
+    'laporan-bulanan.pdf',
+    null, // encoding (default: base64)
+    'application/pdf', // MIME type
+    'attachment' // disposition
+);
+
+// Lanjutkan dengan pengaturan email lainnya
+$email->setSubject('Laporan Bulanan');
+$email->sendTo('manager@example.com', 'Manager Name');
+$email->send();
+```
+
+#### Menambahkan Multiple String Attachment
+
+```php
+$email = new \Ay4t\Emailhtml\Mailer();
+
+// Contoh data untuk multiple attachment
+$pdfContent = generatePdfContent();
+$excelContent = generateExcelContent();
+
+// Tambahkan multiple string attachment sekaligus
+$email->addMultiStringAttachments([
+    [
+        'string' => $pdfContent,
+        'filename' => 'laporan-bulanan.pdf',
+        'type' => 'application/pdf'
+    ],
+    [
+        'string' => $excelContent,
+        'filename' => 'data-penjualan.xlsx',
+        'type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    ]
+]);
+
+// Lanjutkan dengan pengaturan email lainnya
+$email->setSubject('Laporan dan Data Penjualan');
+$email->sendTo('manager@example.com', 'Manager Name');
+$email->send();
+```
+
 ## API Referensi
 
 ### Kelas Mailer
@@ -206,8 +266,10 @@ __construct($filename = 'account_welcome', $config = null)
 | `setSubject(string $sendSubject)` | Mengatur subjek email |
 | `setAltBody(string $altBody)` | Mengatur teks alternatif untuk klien email non-HTML |
 | `setDebugOutput($debugOutput)` | Mengaktifkan/menonaktifkan output debug |
-| `addAttachment(array $attachment)` | Menambahkan attachment tunggal |
-| `addMultiAttachments(array $attachments)` | Menambahkan multiple attachment |
+| `addAttachment(array $attachment)` | Menambahkan file attachment tunggal |
+| `addMultiAttachments(array $attachments)` | Menambahkan multiple file attachment |
+| `addStringAttachment($string, $filename, $encoding, $type, $disposition)` | Menambahkan string attachment (data langsung) |
+| `addMultiStringAttachments(array $attachments)` | Menambahkan multiple string attachment |
 | `send()` | Mengirim email |
 
 ## Kontribusi

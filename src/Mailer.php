@@ -55,6 +55,12 @@ class Mailer
 
     private $phpMailer;
 
+    /**
+     * @var array
+     * @author Ayatulloh Ahad R <ayatulloh@indiega.net>
+     */
+    private array $attachments = [];
+
 
     public function __construct($filename = 'account_welcome', $config = null)
     {
@@ -139,8 +145,13 @@ class Mailer
             $this->phpMailer->addReplyTo($this->config->FromEmail, $this->config->FromName);
 
             //Attachments
-            /* $this->phpMailer->addAttachment('/var/tmp/file.tar.gz');
-            $this->phpMailer->addAttachment('/tmp/image.jpg', 'new.jpg'); */
+            if (!empty($this->attachments)) {
+                foreach ($this->attachments as $attachment) {
+                    if (isset($attachment['content']) && isset($attachment['name'])) {
+                        $this->phpMailer->addAttachment($attachment['content'], $attachment['name']);
+                    }
+                }
+            }
 
             //Content
             $this->phpMailer->isHTML(true);                                  //Set email format to HTML
@@ -197,6 +208,32 @@ class Mailer
     public function setDebugOutput($debugOutput)
     {
         $this->debugOutput = $debugOutput;
+        return $this;
+    }
+
+    /**
+     * Menambahkan attachment file tunggal
+     * 
+     * @param array $attachment Array dengan key 'name' dan 'content'
+     * @return self
+     */
+    public function addAttachment(array $attachment)
+    {
+        $this->attachments[] = $attachment;
+        return $this;
+    }
+
+    /**
+     * Menambahkan multiple attachment files
+     * 
+     * @param array $attachments Array dari attachment, masing-masing dengan key 'name' dan 'content'
+     * @return self
+     */
+    public function addMultiAttachments(array $attachments)
+    {
+        foreach ($attachments as $attachment) {
+            $this->attachments[] = $attachment;
+        }
         return $this;
     }
 }
